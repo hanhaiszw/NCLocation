@@ -1,0 +1,111 @@
+﻿<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+  <title>LocationServer_gaode</title>
+  <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main.css?v=1.0" />
+  <script src="http://cache.amap.com/lbs/static/es5.min.js"></script>
+  <script src="http://webapi.amap.com/maps?v=1.3&key=9f2b5ec6aaabc7dca9f3616338e50f3e&plugin=AMap.Geocoder"></script>
+  <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>   <!-- 添加缩放标尺 -->
+</head>
+
+<body>
+  <div id="mapContainer"></div>
+  <div class="button-group">
+    <input id="en" type="button" class="button" value="English" />       <!-- //显示英文底图 -->
+    <input id="zh_en" type="button" class="button" value="CN-EN" />  <!-- //显示中英文对照底图 -->
+    <input id="zh_cn" type="button" class="button" value="Chinese" />      <!-- //显示中文底图 -->
+  </div>
+  <!-- UI组件库 1.0 -->
+  <script src="http://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+  <script>
+   //屏蔽js脚本错误，屏蔽如果断网出现的脚本错误提示窗
+    function SlyarErrors() { 
+      return true;
+    } 
+    window.onerror = SlyarErrors;
+
+
+    var map = new AMap.Map('mapContainer', {
+      resizeEnable: true,
+      zoom:14,   //18
+      //lang:'en',   //设置语言为英文
+      lang:'zh_cn',  //设置为中文
+      center: [118.801741,32.064245]
+    });
+	
+	
+    ['en', 'zh_en', 'zh_cn'].forEach(function(btn) {
+      var button = document.getElementById(btn);
+      AMap.event.addDomListener(button,'click',clickListener)
+    });
+
+    //设置语言
+    function clickListener() {
+        map.setLang(this.id);
+    }
+ 
+ 
+ 
+ //引入SimpleMarker，loadUI的路径参数为模块名中 'ui/' 之后的部分
+	
+	function initPage(SimpleMarker,lnglatXY) {
+
+		//创建SimpleMarker实例
+		new SimpleMarker({
+
+			//显示定位点
+			showPositionPoint:true,
+			//前景文字
+			//iconLabel: 'A',
+
+			//图标主题
+			iconTheme: 'fresh',
+
+			//背景图标样式
+			iconStyle: 'red',
+
+			//...其他Marker选项...，不包括content
+			map: map,
+			position: lnglatXY
+		});
+	}
+    // //鼠标打点
+    // map.plugin(["AMap.MouseTool"],function () {
+    //     var mouseTool=new AMap.MouseTool(map);
+    //     mouseTool.marker({
+    //       icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_r.png",
+    //     });
+    // });
+    // map.plugin(["AMap.MouseTool"],function () {
+    //     var mouseTool=new AMap.MouseTool(map);
+    //     mouseTool.polyline({
+    //        strokeColor:"#FF0000",
+    //        strokeWeight:2.5,
+    //     });
+    // });
+    
+	//设置地点标记
+	function makePoint(longitude,latitude){
+	  //把字符串经纬度转化为小数
+      try{
+        lnglatXY = [longitude*1,latitude*1];
+        //alert(lnglatXY);
+        //地图平移至该点
+        map.panTo(lnglatXY);
+        // 打点
+        AMapUI.loadUI(['overlay/SimpleMarker'], function(SimpleMarker) {
+			initPage(SimpleMarker,lnglatXY);
+		});
+      }catch(e){
+
+      }
+	}
+    
+  </script>
+</body>
+
+</html>
